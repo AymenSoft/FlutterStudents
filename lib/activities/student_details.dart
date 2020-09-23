@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
 class StudentDetails extends StatefulWidget{
+  String screenTitle = "Student Details";
+  StudentDetails(this.screenTitle);
   @override
   State<StatefulWidget> createState() {
-    return Student();
+    return Student(screenTitle);
   }
 
 }
@@ -20,11 +22,14 @@ class Student extends State<StudentDetails>{
   TextEditingController studentName = TextEditingController();
   TextEditingController studentDescription = TextEditingController();
 
+  String screenTitle = "Student Details";
+  Student(this.screenTitle);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Student Details"),
+        title: Text(screenTitle),
       ),
       body: Padding(
         padding: EdgeInsets.all(15),

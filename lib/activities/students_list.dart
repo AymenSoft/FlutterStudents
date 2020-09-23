@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_students/activities/student_details.dart';
 
 class StudentsList extends StatefulWidget{
   @override
@@ -21,7 +22,7 @@ class Students extends State<StudentsList>{
       body: getStudentsList(),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-
+          studentDetails("Add Student");
         },
         child: Icon(Icons.add),
       ),
@@ -47,12 +48,20 @@ class Students extends State<StudentsList>{
               color: Colors.blueAccent,
             ),
             onTap: (){
-              debugPrint("Student tapped");
+              studentDetails("Update Student");
             },
           ),
         );
       }
     );
+  }
+
+  void studentDetails(screenTitle){
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context){
+        return StudentDetails(screenTitle);
+    }
+    ));
   }
 
 }

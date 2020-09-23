@@ -19,6 +19,12 @@ class Students extends State<StudentsList>{
         title: Text("Students List"),
       ),
       body: getStudentsList(),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+
+        },
+        child: Icon(Icons.add),
+      ),
     );
   }
 

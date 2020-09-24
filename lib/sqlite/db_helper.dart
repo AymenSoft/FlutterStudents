@@ -2,7 +2,6 @@ import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter_students/models/students.dart';
 
 class DBHelper{
 
@@ -25,17 +24,17 @@ class DBHelper{
     return database;
   }
 
-  final int DB_Version = 1;
-  final String DB_Name = "students.db";
+  static final int DB_Version = 1;
+  static final String DB_Name = "students.db";
 
-  final String TABLE_STUDENTS = "TABLE_STUDENTS";
-  String id = "id";
-  String name = "name";
-  String description = "description";
-  String status = "status";
+  static final String TABLE_STUDENTS = "TABLE_STUDENTS";
+  static final String id = "id";
+  static final String name = "name";
+  static final String description = "description";
+  static final String status = "status";
 
   //create table devices
-  final String Create_TABLE_DEVICES = "Create Table IF NOT EXISTS TABLE_STUDENTS"
+  static final String Create_TABLE_DEVICES = "Create Table IF NOT EXISTS TABLE_STUDENTS"
       "("
       "id INTEGER PRIMARY KEY AUTOINCREMENT,"
       "name STRING,"

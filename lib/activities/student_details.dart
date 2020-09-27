@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_students/models/students_model.dart';
+import 'package:flutter_students/sqlite/students_database.dart';
 
 class StudentDetails extends StatefulWidget{
 
   String screenTitle = "Student Details";
 
-  StudentDetails(this.screenTitle);
+  String action;
+
+  StudentModel student;
+
+  StudentDetails(this.screenTitle, this.action, [this.student]);
 
   @override
   State<StatefulWidget> createState() {
-    return Student(screenTitle);
+    return Student(screenTitle, action, student);
   }
 
 }
@@ -17,19 +23,35 @@ class Student extends State<StudentDetails>{
 
   static var status = ["success", "failed"];
 
-  String studentStatus = "success";
-
   String name = "";
   String description = "";
+  String studentStatus = "success";
 
   TextEditingController studentName = TextEditingController();
   TextEditingController studentDescription = TextEditingController();
 
   String screenTitle = "Student Details";
-  Student(this.screenTitle);
+
+  String action;
+
+  StudentModel student;
+
+  bool activityResult = false;
+
+  Student(this.screenTitle, this.action, [this.student]);
 
   @override
   Widget build(BuildContext context) {
+
+    debugPrint(action);
+    if (action == "update"){
+      debugPrint("user: ${student.name}, ${student.description}");
+      studentName.text = student.name;
+      studentDescription.text = student.description;
+      setDropdown(student.status);
+      debugPrint(studentName.text);
+    }
+
     return WillPopScope(
       onWillPop: (){
         onBackPressed();
@@ -43,6 +65,17 @@ class Student extends State<StudentDetails>{
               onBackPressed();
             },
           ),
+          actions: [
+            Container(
+              child: action != "update" ? Container() : IconButton(
+                onPressed: (){
+                  alertDelete(context);
+                },
+                icon: Icon(Icons.delete),
+                color: Colors.white,
+              ),
+            )
+          ],
         ),
         body: Padding(
           padding: EdgeInsets.all(15),
@@ -52,7 +85,7 @@ class Student extends State<StudentDetails>{
                 title: DropdownButton(
                   onChanged: (String selectedItem){
                     setState(() {
-                      studentStatus = selectedItem;
+                      setDropdown(selectedItem);
                     });
                   },
                   items: status.map((String item){
@@ -69,9 +102,6 @@ class Student extends State<StudentDetails>{
                 child: TextField(
                   controller: studentName,
                   decoration: textFieldDecoration("add name"),
-                  onChanged: (name){
-                    this.name = name;
-                  },
                 ),
               ),
               Padding(
@@ -88,7 +118,7 @@ class Student extends State<StudentDetails>{
                 padding: EdgeInsets.all(10),
                 child: FlatButton(
                   onPressed: (){
-                    debugPrint("try to save student");
+                    saveStudent();
                   },
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -141,8 +171,101 @@ class Student extends State<StudentDetails>{
     );
   }
 
+  //set drop down success value
+  setDropdown(String value){
+    studentStatus = value;
+    student.status = studentStatus;
+  }
+
+  //save student
+  saveStudent(){
+    if (action == 'add'){
+      insert();
+    }else {
+      update();
+    }
+  }
+
+  //insert new student
+  insert()async{
+    debugPrint(studentName.text);
+    student = StudentModel();
+    student.name = studentName.text;
+    student.description = studentDescription.text;
+    student.status = studentStatus;
+    final id = await StudentsDB().insert(student.toMap());
+    if (id > 0){
+      activityResult = true;
+      onBackPressed();
+    }
+  }
+
+  //update current student
+  update()async{
+    debugPrint(studentName.text);
+    student.name = studentName.text;
+    student.description = studentDescription.text;
+    student.status = studentStatus;
+    final id = await StudentsDB().update(student.toMap());
+    if (id > 0){
+      activityResult = true;
+      onBackPressed();
+    }
+  }
+
+  //delete student
+  delete()async{
+    final count = await StudentsDB().delete(student.id);
+    debugPrint("delete: $count");
+    if (count > 0){
+      debugPrint("count");
+      activityResult = true;
+      Navigator.pop(context, activityResult);
+      Navigator.pop(context, activityResult);
+    }
+  }
+
+  alertDelete(BuildContext context){
+    AlertDialog alertDialog = AlertDialog(
+      title: Text("My Students App"),
+      content: Text("delete this student?"),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(topLeft: Radius.circular(35), bottomRight: Radius.circular(35)),
+          side: BorderSide(width: 1, color: Colors.redAccent)
+      ),
+      actions: <Widget>[
+        Builder(
+            builder: (context){
+              return FlatButton(
+                onPressed: (){
+                  onBackPressed();
+                },
+                child: Text("CANCEL"),
+              );
+            }
+        ),
+        Builder(
+            builder: (context){
+              return FlatButton(
+                onPressed: (){
+                  delete();
+                },
+                child: Text("OK"),
+              );
+            }
+        )
+      ],
+    );
+    showDialog(
+        context: context,
+        builder: (BuildContext context){
+          return alertDialog;
+        }
+    );
+  }
+
   void onBackPressed(){
-    Navigator.pop(context);
+    Navigator.pop(context, activityResult);
   }
 
 }

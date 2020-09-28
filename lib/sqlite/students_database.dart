@@ -35,6 +35,13 @@ class StudentsDB{
     return list;
   }
 
+  //count number of students in database
+  Future<int>getCount()async{
+    Database db = await dbHelper.database;
+    var count = await db.rawQuery("SELECT COUNT(*) FROM ${DBHelper.tableStudents}");
+    return Sqflite.firstIntValue(count);
+  }
+
   //delete student by id
   Future<int> delete(int id) async {
     Database db = await dbHelper.database;

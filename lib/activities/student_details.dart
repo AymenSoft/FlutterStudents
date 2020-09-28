@@ -14,12 +14,12 @@ class StudentDetails extends StatefulWidget{
 
   @override
   State<StatefulWidget> createState() {
-    return Student(screenTitle, action, student);
+    return StudentState(screenTitle, action, student);
   }
 
 }
 
-class Student extends State<StudentDetails>{
+class StudentState extends State<StudentDetails>{
 
   static var status = ["success", "failed"];
 
@@ -38,7 +38,7 @@ class Student extends State<StudentDetails>{
 
   bool activityResult = false;
 
-  Student(this.screenTitle, this.action, [this.student]);
+  StudentState(this.screenTitle, this.action, [this.student]);
 
   @override
   Widget build(BuildContext context) {
@@ -221,10 +221,10 @@ class Student extends State<StudentDetails>{
       debugPrint("count");
       activityResult = true;
       Navigator.pop(context, activityResult);
-      Navigator.pop(context, activityResult);
     }
   }
 
+  //show alert before delete current student
   alertDelete(BuildContext context){
     AlertDialog alertDialog = AlertDialog(
       title: Text("My Students App"),
@@ -238,7 +238,7 @@ class Student extends State<StudentDetails>{
             builder: (context){
               return FlatButton(
                 onPressed: (){
-                  onBackPressed();
+                  Navigator.pop(context);
                 },
                 child: Text("CANCEL"),
               );
@@ -248,6 +248,7 @@ class Student extends State<StudentDetails>{
             builder: (context){
               return FlatButton(
                 onPressed: (){
+                  Navigator.pop(context);
                   delete();
                 },
                 child: Text("OK"),
